@@ -1,4 +1,5 @@
 .venv/
 .env
 .git/
+saved_models/
 config-example.json

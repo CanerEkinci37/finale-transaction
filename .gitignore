@@ -5,6 +5,8 @@
 *.pyc
 __pycache__/
 
+saved_models/
+
 .vscode/
 .idea/
 
