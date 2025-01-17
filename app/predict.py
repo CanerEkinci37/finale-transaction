@@ -151,6 +151,8 @@ def start(config: dict, test_data: list[dict]):
             algorithms=partner_df_text_similarity_methods,
         )
 
+        print(test_df.columns[:30])
+
         # Ratio Classify Function
         builder = PredictingBuilder(config)
         test_deleted_columns = ["description1", "cleaned_description1"]
@@ -176,7 +178,7 @@ def start(config: dict, test_data: list[dict]):
                 partner_df, columns=["LIFNR", "KUNNR"]
             )
 
-            predict_column = "KUNNR" if ratio_pred[0] == "1" else "LIFNR"
+            predict_column = "KUNNR" if ratio_pred[0] == 1 else "LIFNR"
             filter_column = "LIFNR" if predict_column == "KUNNR" else "KUNNR"
 
             partner_df_copy = partner_df_copy[
