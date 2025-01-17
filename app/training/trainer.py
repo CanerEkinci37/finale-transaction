@@ -24,10 +24,10 @@ class Trainer:
             )
         elif task == "classifying":
             return classifier_mapper.get_model(
-                name=algorithm, verbose=False, logging_level="Silent"
+                name=algorithm, verbose=False, allow_writing_files=False
             )
         return regressor_mapper.get_model(
-            name=algorithm, verbose=False, logging_level="Silent"
+            name=algorithm, verbose=False, allow_writing_files=False
         )
 
     def train(self, X: np.ndarray, y: np.ndarray) -> None:
