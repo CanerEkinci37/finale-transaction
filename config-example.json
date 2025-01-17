@@ -1,0 +1,112 @@
+    {
+        "dataset_path": {
+            "partner": "/code/data/partnerData.json",
+            "transaction": "/code/data/transactionData.json"
+        },
+        "selected_columns": {
+            "partner": [
+                "BUKRS", "KUNNR", "LIFNR", "PARTNER", "TAX_NUMBER",
+                "IBAN", "ZMIN", "ZMAX", "ZAVG", "TOTAL",
+                "TRANSACTION_QUANTITY", "EUR", "TRY", "USD"
+            ],
+            "transaction": [
+                "bukrs", "description1", "payment_type", "amount", "typecode1",
+                "lifnr", "kunnr"
+            ]
+        },
+        "columns_to_modify": {
+            "numeric_columns": {
+                "partner": ["LIFNR", "KUNNR"],
+                "transaction": ["lifnr", "kunnr"]
+            },
+            "ohe_columns": {
+                "transaction": {  
+                    "columns": ["payment_type", "typecode1"]  ,
+                    "save_load_path": ["app/saved_models/encoder/payment_type.pkl", "app/saved_models/encoder/typecode1.pkl"]
+                }
+            },
+            "le_columns": {
+                "partner": {}
+            },
+            "text_columns": {
+                "partner": ["PARTNER"],
+                "transaction": ["description1"]
+            }
+        },
+        "columns_to_extract": {
+            "text_vectorize": {
+                "transaction": {
+                    "columns": ["cleaned_description1"],
+                    "method": "tfidf",
+                    "save_load_path": ["app/saved_models/text_vectorizer/description1.pkl"]
+                },
+                "partner": {
+                    "columns": ["cleaned_PARTNER"],
+                    "method": "tfidf",
+                    "save_load_path": ["app/saved_models/text_vectorizer/partner.pkl"]
+                }
+            },
+            "text_similarity": {
+                "merge": {
+                    "columns": [["cleaned_PARTNER", "cleaned_description1"]],
+                    "methods": ["levenshtein", "lcs", "jaro", "n_diff", "damerau_levenshtein", "jaro_winkler"]
+                }
+            }
+        },
+        "columns_to_build": {
+            "deleted_columns": {
+                "classify_ratio": ["description1", "cleaned_description1", "lifnr", "kunnr"],
+                "predict_lifnr":[
+                    "description1", "cleaned_description1", "PARTNER", "cleaned_PARTNER", "TAX_NUMBER",
+                    "IBAN", "KUNNR", "LIFNR", "lifnr", "kunnr"
+                ],
+                "predict_kunnr": [
+                    "description1", "cleaned_description1", "PARTNER", "cleaned_PARTNER", "TAX_NUMBER",
+                    "IBAN", "KUNNR", "LIFNR", "lifnr", "kunnr"
+                ]
+            },
+            "filled_columns": {
+                "classify_ratio": {
+                    "zero": ["kunnr", "lifnr"],
+                    "missing": []
+                },
+                "predict_lifnr": {
+                    "zero": ["kunnr", "lifnr", "KUNNR", "LIFNR"],
+                    "missing": []
+                },
+                "predict_kunnr": {
+                    "zero": ["kunnr", "lifnr", "KUNNR", "LIFNR"],
+                    "missing": []
+                }
+            },
+            "merged_columns": {
+                "left_key": ["lifnr", "kunnr"],
+                "right_key": ["LIFNR", "KUNNR"]
+            },
+            "shuffled_columns": [
+                "amount", "payment_type_S", "typecode1_NCHG", "typecode1_NCHK", "typecode1_NCOM",
+                "typecode1_NDDB", "typecode1_NEFT", "typecode1_NFAT", "typecode1_NFEX", "typecode1_NIMP",
+                "typecode1_NINT", "typecode1_NLDP", "typecode1_NMSC", "typecode1_NSWF", "typecode1_NTAX",
+                "typecode1_NTDP", "typecode1_NTRF", "typecode1_NVRM", "ZMIN", "ZMAX",
+                "ZAVG", "TOTAL", "TRANSACTION_QUANTITY", "EUR", "TRY",
+                "USD"
+            ]
+        },
+        "columns_to_train": {
+            "task_type": {
+                "classify_ratio": "classifying",
+                "predict_lifnr": "regression",
+                "predict_kunnr": "regression"
+            },
+            "algorithm": {
+                "classify_ratio": "catboost",
+                "predict_lifnr": "catboost",
+                "predict_kunnr": "catboost"
+            },
+            "save_load": {
+                "classify_ratio": "app/saved_models/ml_models/ratio.pkl",
+                "predict_lifnr": "app/saved_models/ml_models/lifnr.pkl",
+                "predict_kunnr": "app/saved_models/ml_models/kunnr.pkl"
+            }
+        }
+    }
