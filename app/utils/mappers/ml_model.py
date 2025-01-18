@@ -18,7 +18,12 @@ from sklearn.linear_model import (
 )
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.svm import SVC, SVR
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.tree import (
+    DecisionTreeClassifier,
+    DecisionTreeRegressor,
+    ExtraTreeClassifier,
+    ExtraTreeRegressor,
+)
 from xgboost import XGBClassifier, XGBRegressor
 
 
@@ -60,7 +65,8 @@ class RegressorMapper(BaseModelMapper):
         # Tree-based models
         self.register_model("dt", DecisionTreeRegressor)
         self.register_model("rf", RandomForestRegressor)
-        self.register_model("gbr", GradientBoostingRegressor)
+        self.register_model("et", ExtraTreeRegressor)
+        self.register_model("gbm", GradientBoostingRegressor)
 
         # Neighbor-based models
         self.register_model("knn", KNeighborsRegressor)
@@ -84,7 +90,8 @@ class ClassifierMapper(BaseModelMapper):
         # Tree-based models
         self.register_model("dt", DecisionTreeClassifier)
         self.register_model("rf", RandomForestClassifier)
-        self.register_model("gbr", GradientBoostingClassifier)
+        self.register_model("et", ExtraTreeClassifier)
+        self.register_model("gbm", GradientBoostingClassifier)
 
         # Neighbor-based models
         self.register_model("knn", KNeighborsClassifier)

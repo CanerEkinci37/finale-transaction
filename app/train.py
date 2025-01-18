@@ -1,7 +1,16 @@
 import logging
 
 import numpy as np
-import pandas as pd
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    mean_absolute_error,
+    mean_squared_error,
+    precision_score,
+    r2_score,
+    recall_score,
+)
+from sklearn.model_selection import train_test_split
 
 from app.handler.data_loader import DataLoader
 from app.preparation.builder import TrainingBuilder
@@ -147,13 +156,18 @@ def start(config: dict, models: list[str]):
             df_copy, columns=df_filled_missing
         )
 
-        df_copy["Ratio"] = df_copy["kunnr"].apply(lambda x: "0" if x == 0 else "1")
+        df_copy["Ratio"] = df_copy["kunnr"].apply(lambda x: 0 if x == 0 else 1)
 
         df_deleted = deleted_columns.get("classify_ratio", [])
 
         df_copy = builder.drop_columns(df_copy, columns=df_deleted)
         X = builder.drop_columns(df_copy, columns=["Ratio"])
         y = df_copy["Ratio"]
+
+        # Split to Train and Test
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
 
         task_type = config.get("columns_to_train", {}).get("task_type", {})
         df_task_type = task_type.get("classify_ratio")
@@ -162,13 +176,24 @@ def start(config: dict, models: list[str]):
         df_algorithm = algorithm.get("classify_ratio")
 
         trainer = Trainer(config, task=df_task_type, algorithm=df_algorithm)
-        trainer.train(X, y)
+        trainer.train(X_train, y_train)
+
+        # Get Metrics
+        y_pred = trainer.predict(X_test)
+        metrics = {
+            "accuracy": accuracy_score(y_test, y_pred),
+            "recall": recall_score(y_test, y_pred, pos_label=1),
+            "precision": precision_score(y_test, y_pred, pos_label=1),
+            "f1": f1_score(y_test, y_pred, pos_label=1),
+        }
 
         save_load = config.get("columns_to_train", {}).get("save_load", {})
         df_save_load = save_load.get("classify_ratio")
 
         trainer.save(df_save_load)
         logger.info("Ratio Classifier Model is trained")
+
+        return metrics
 
     # Training Lifnr, Kunnr Regressor
     merged_columns = config.get("columns_to_build", {}).get("merged_columns", {})
@@ -238,16 +263,32 @@ def start(config: dict, models: list[str]):
         X = builder.drop_columns(final_df, columns=["Ratio"])
         y = final_df["Ratio"]
 
+        # Split to Train and Test
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.1, random_state=42
+        )
+
         task_train = config.get("columns_to_train", {})
         task_type = task_train.get("task_type", {}).get(task_name)
         task_algorithm = task_train.get("algorithm", {}).get(task_name)
         task_save_load = task_train.get("save_load", {}).get(task_name)
 
         trainer = Trainer(config, task=task_type, algorithm=task_algorithm)
-        trainer.train(X.values, y)
+        trainer.train(X_train.values, y_train)
+
+        # Get Metrics
+        y_pred = trainer.predict(X_test.values)
+        metrics = {
+            "mse": mean_squared_error(y_test, y_pred),
+            "mae": mean_absolute_error(y_test, y_pred),
+            "r2": r2_score(y_test, y_pred),
+        }
+
         trainer.save(task_save_load)
 
         logger.info(f"{task_name} regressor model training complete.")
+
+        return metrics
 
     available_models = {
         "ratio": lambda: train_ratio_classifer(transactions),
@@ -273,8 +314,11 @@ def start(config: dict, models: list[str]):
     logger.info(f"Starting training for models: {models}")
 
     # Run the training workflows for specified models
+    model_metrics = {}
     for model in models:
         logger.info(f"Training model: {model}")
-        available_models[model]()
+        metrics = available_models[model]()
+        model_metrics[model] = metrics
 
     logger.info(f"Training completed for models: {models}")
+    return model_metrics

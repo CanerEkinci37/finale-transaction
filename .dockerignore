@@ -3,3 +3,4 @@
 .git/
 saved_models/
 config-example.json
+catboost_info/

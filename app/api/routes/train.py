@@ -26,12 +26,13 @@ async def get_train(
 
     try:
         # Call the prediction function with the config and models list
-        train.start(config=config.data, models=models)
+        metrics = train.start(config=config.data, models=models)
 
         # Prepare and return the results
         return {
             "status": "Training is completed successfully",
             "estimated_time": utils.format_time(time.time() - started_at),
+            "metrics": metrics,
         }
     except (IndexError, KeyError, ValueError, TypeError) as specific_error:
         logger.error(f"Known error countered: {specific_error}")

@@ -23,12 +23,8 @@ class Trainer:
                 f"Invalid task type: '{task}'. Must be one of {self.VALID_TASKS}"
             )
         elif task == "classifying":
-            return classifier_mapper.get_model(
-                name=algorithm, verbose=False, allow_writing_files=False
-            )
-        return regressor_mapper.get_model(
-            name=algorithm, verbose=False, allow_writing_files=False
-        )
+            return classifier_mapper.get_model(name=algorithm)
+        return regressor_mapper.get_model(name=algorithm)
 
     def train(self, X: np.ndarray, y: np.ndarray) -> None:
         self.model.fit(X, y)

@@ -99,9 +99,9 @@
                 "predict_kunnr": "regression"
             },
             "algorithm": {
-                "classify_ratio": "catboost",
-                "predict_lifnr": "catboost",
-                "predict_kunnr": "catboost"
+                "classify_ratio": "rf",
+                "predict_lifnr": "rf",
+                "predict_kunnr": "rf"
             },
             "save_load": {
                 "classify_ratio": "app/saved_models/ml_models/ratio.pkl",

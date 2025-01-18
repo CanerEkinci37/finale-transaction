@@ -1,6 +1,7 @@
 .env
 .venv/
 
+catboost_info/
 
 *.pyc
 __pycache__/
