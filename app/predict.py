@@ -242,7 +242,6 @@ def start(config: dict, test_data: list[dict]):
         test_df_list.append(
             predict_lifnr_kunnr(test_df, partner_df, ratio_pred=ratio_pred)
         )
-        logger.info(f"Completed processing for test data index: {data_idx}")
 
     logger.info("Prediction process completed")
     return test_df_list  # Return a list of predictions for each test data
