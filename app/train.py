@@ -17,6 +17,8 @@ def start(config: dict, models: list[str]):
     transactions = data_utils.process_train_data(dataset_name="transaction")
     partners = data_utils.process_train_data(dataset_name="partner")
 
+    logger.info(transactions.head(1))
+    logger.info(f"transaction columns: {transactions.columns}")
     builder = TrainingBuilder(config)
     filled_columns = config.get("columns_to_build", {}).get("filled_columns", {})
     deleted_columns = config.get("columns_to_build", {}).get("deleted_columns", {})

@@ -19,11 +19,9 @@ def start(config: dict, test_data: list[dict]):
 
     partner_df = data_utils.process_train_data(dataset_name="partner")
 
-    # Drop Columns
     selected_columns = config.get("selected_columns", {})
     transaction_selected = selected_columns.get("transaction", [])
 
-    # Create a DataFrame for each test data element
     test_df_list = []
     for idx, data in enumerate(test_data):
         test_df = pd.DataFrame([data])
@@ -39,7 +37,7 @@ def start(config: dict, test_data: list[dict]):
         test_deleted_columns = ["description1", "cleaned_description1"]
         save_load = config.get("columns_to_train", {}).get("save_load", {})
 
-        def predict_ratio_class(df: pd.DataFrame):
+        def predict_ratio_class(df: pd.DataFrame) -> np.ndarray:
             df_copy = df.copy()
             df_copy = builder.drop_columns(df_copy, columns=test_deleted_columns)
             predictor = Predictor(path=save_load.get("classify_ratio"))
@@ -49,7 +47,7 @@ def start(config: dict, test_data: list[dict]):
 
         def predict_lifnr_kunnr(
             test_df: pd.DataFrame, partner_df: pd.DataFrame, ratio_pred: np.ndarray
-        ):
+        ) -> list[list[dict]]:
             extractor = PredictingExtractor(config)
             text_similarity = config.get("columns_to_extract", {}).get(
                 "text_similarity", {}
@@ -95,15 +93,15 @@ def start(config: dict, test_data: list[dict]):
 
             merged_df = builder.drop_columns(merged_df, columns=merged_deleted_columns)
 
-            predictor = Predictor(save_load.get(task_name))
+            predictor = Predictor(path=save_load.get(task_name))
             y_pred = predictor.predict(merged_df.values)
 
-            top_5_indices = y_pred.argsort()[-20:][::-1]
-            top_5_pred = y_pred[top_5_indices]
-            top_5_indices_values = indices[top_5_indices]
+            top_20_indices = y_pred.argsort()[-20:][::-1]
+            top_20_pred = y_pred[top_20_indices]
+            top_5_indices_values = indices[top_20_indices]
 
             pred_results = []
-            for a, b in zip(top_5_indices_values, top_5_pred):
+            for a, b in zip(top_5_indices_values, top_20_pred):
                 pred_results.append(
                     {
                         filter_column.lower(): "0",

@@ -1,7 +1,7 @@
     {
         "dataset_path": {
-            "partner": "/code/data/partnerData.json",
-            "transaction": "/code/data/transactionData.json"
+            "partner": "data/partnerData.json",
+            "transaction": "data/transactionData.json"
         },
         "selected_columns": {
             "partner": [
@@ -49,7 +49,9 @@
             "text_similarity": {
                 "merge": {
                     "columns": [["cleaned_PARTNER", "cleaned_description1"]],
-                    "methods": ["levenshtein", "lcs", "jaro", "n_diff", "damerau_levenshtein", "jaro_winkler"]
+                    "methods": ["levenshtein", "lcs", "n_diff", "n_gram", "q_gram",
+                                "jaccard", "cosine", "fuzzy", "jaro", "hamming", 
+                                "jaro_winkler", "damerau_levenshtein"]
                 }
             }
         },
@@ -99,9 +101,9 @@
                 "predict_kunnr": "regression"
             },
             "algorithm": {
-                "classify_ratio": "rf",
-                "predict_lifnr": "rf",
-                "predict_kunnr": "rf"
+                "classify_ratio": "lgbm",
+                "predict_lifnr": "lgbm",
+                "predict_kunnr": "lgbm"
             },
             "save_load": {
                 "classify_ratio": "app/saved_models/ml_models/ratio.pkl",

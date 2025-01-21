@@ -3,4 +3,5 @@
 .git/
 saved_models/
 config-example.json
+main.ipynb
 catboost_info/

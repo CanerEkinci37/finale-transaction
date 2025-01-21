@@ -20,11 +20,11 @@ class DataUtils:
         self.config = config
         self.loader = DataLoader(config)
         self.cleaner = BaseCleaner(config)
-        self.extractor = (
-            TrainingExtractor(config)
-            if mode == "train"
-            else PredictingExtractor(config)
-        )
+
+        if mode == "train":
+            self.extractor = TrainingExtractor(config)
+        else:
+            self.extractor = PredictingExtractor(config)
         self.mode = mode
 
     def _validate_data(self, dataset_name: str) -> pd.DataFrame:
@@ -60,7 +60,7 @@ class DataUtils:
 
         df_ohe = ohe_columns.get(dataset_name, {})
         df_ohe_columns = df_ohe.get("columns", [])
-        df_ohe_path = df_ohe.get("save_load_path")
+        df_ohe_path = df_ohe.get("save_load_path", [])
         return self.extractor.apply_one_hot_encoding(
             df_copy, df_ohe_columns, df_ohe_path
         )

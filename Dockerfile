@@ -4,6 +4,7 @@ WORKDIR /code
 
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 

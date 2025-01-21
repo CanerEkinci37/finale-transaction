@@ -2,6 +2,7 @@
 .venv/
 
 catboost_info/
+main.ipynb
 
 *.pyc
 __pycache__/
