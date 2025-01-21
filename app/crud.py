@@ -1,3 +1,5 @@
+from typing import Any
+
 from sqlmodel import Session, select
 
 from .models import Config, ConfigCreate, ConfigUpdate
@@ -17,7 +19,7 @@ def get_config(*, session: Session):
     return session_config
 
 
-def set_config(*, session: Session, config_update: ConfigUpdate):
+def set_config(*, session: Session, config_update: ConfigUpdate) -> Any:
     config_data = config_update.model_dump()
 
     statement = select(Config)

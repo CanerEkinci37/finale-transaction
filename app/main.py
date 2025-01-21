@@ -12,5 +12,5 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
 @app.on_event("startup")
-def startup_event():
+def startup_event() -> None:
     initial_data.main()

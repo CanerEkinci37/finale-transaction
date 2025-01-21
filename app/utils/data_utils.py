@@ -16,7 +16,7 @@ from ..preparation.extractor import PredictingExtractor, TrainingExtractor
 
 
 class DataUtils:
-    def __init__(self, config: dict, mode: str = "train"):
+    def __init__(self, config: dict, mode: str = "train") -> None:
         self.config = config
         self.loader = DataLoader(config)
         self.cleaner = BaseCleaner(config)
@@ -134,7 +134,7 @@ class DataUtils:
         df_copy = self._get_text_vectorization(df_copy, dataset_name="transaction")
         return self._get_text_similarity(df_copy, dataset_name="transaction")
 
-    def calculate_metrics(self, y_true, y_pred, task_type: str):
+    def calculate_metrics(self, y_true, y_pred, task_type: str) -> dict:
         if task_type == "classification":
             return {
                 "accuracy": accuracy_score(y_true, y_pred),

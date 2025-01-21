@@ -88,7 +88,7 @@ class BaseBuilder:
 
 
 class TrainingBuilder(BaseBuilder):
-    def __init__(self, config):
+    def __init__(self, config: dict):
         super().__init__(config)
 
     def get_sample(

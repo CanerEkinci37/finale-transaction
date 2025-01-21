@@ -42,10 +42,10 @@ class BaseModelMapper:
     def __init__(self):
         self._mapping: dict[str, Type[MLModelProtocol]] = {}
 
-    def register_model(self, name: str, model_class: Type[MLModelProtocol]):
+    def register_model(self, name: str, model_class: Type[MLModelProtocol]) -> None:
         self._mapping[name] = model_class
 
-    def get_model(self, name: str, **kwargs):
+    def get_model(self, name: str, **kwargs) -> MLModelProtocol:
         model_class = self._mapping.get(name)
         if model_class is None:
             raise ValueError(f"Model '{name}' is not registered.")
